@@ -1,0 +1,30 @@
+<!-- quotes/templates/quotes/show_all.html -->
+{% extends 'quotes/base.html' %}
+
+{% block content %}
+
+<!-- Note: this HTML template will need to use a loop to process the list of quotes, and another loop to process the list of images. -->
+
+<table class="quotes_table">
+  {% for item in quotes_list %}
+  <tr>
+    <td>"{{ item }}"</td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+<br>
+
+<table class="quotes_table">
+
+  {% for item in images_list %}
+
+  <td><img class="" src="{{item}}" alt="" width="300px">
+  </td>
+
+  {% endfor %}
+</table>
+
+
+{% endblock %}

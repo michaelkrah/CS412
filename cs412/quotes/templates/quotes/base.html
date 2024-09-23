@@ -1,0 +1,38 @@
+<!-- quotes/templates/quotes/home.html 
+Base page 
+-->
+
+{% load static %}
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+
+  <nav>
+    <h1>Vincent van Gogh Quotes</h1>
+    <ul>
+      <a href="{% url 'quote' %}"> Quote</a>
+      <a href="{% url 'show_all' %}"> All Quotes</a>
+      <a href="{% url 'about' %}"> About</a>
+    </ul>
+  </nav>
+
+
+  {% block content %}
+  <!-- Where new things go -->
+  {% endblock %}
+
+  <div class="centered_quotes">
+
+    This page was generated at {{current_time}}.
+  </div>
+
+</body>
+
+</html>
