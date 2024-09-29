@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "hw", # new app /Step 1
     "quotes",
+    "formdata",
+    "restaurant",
 ]
 
 MIDDLEWARE = [
