@@ -1,0 +1,21 @@
+<!-- templates/base.html -->
+<!-- mini_fb/templates/mini_fb/base.html -->
+{% load static %}
+<html>
+
+<head>
+  <title>Mini Facebook</title>
+  <link rel="stylesheet" href="{% static 'styles-mini-fb.css' %}">
+</head>
+
+<body>
+  <header>
+    <h1>Mini Facebook</h1>
+  </header>
+
+  {% block content %}
+  {% endblock %}
+
+</body>
+
+</html>

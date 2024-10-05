@@ -1,0 +1,23 @@
+<!-- templates/show_all_profiles_view.html -->
+{% extends 'mini_fb/base.html' %}
+<h1>Showing all Articles</h1>
+<!-- scriptlet code to display the value of the variable `profiles` 
+-->
+{% block content %}
+<main class="grid-container">
+  {% for p in profiles %}
+  <profile>
+    {% if p.profile_image_url %}
+    <img src="{{p.profile_image_url}}" alt="{{p.profile_image_url}}">
+    {% endif %}
+
+    <div>
+      <h2>{{p.first_name}} {{p.last_name}}</h2>
+      <p>
+        {{p.city}}
+      </p>
+    </div>
+  </profile>
+  {% endfor %}
+</main>
+{% endblock %}

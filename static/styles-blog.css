@@ -57,6 +57,10 @@ article.featured img {
   border-radius: 8px;
 }
 
+img {
+  max-width: 50px;
+}
+
 article p,
 article h3 {
   margin: 20px 10px;
