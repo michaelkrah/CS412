@@ -1,0 +1,41 @@
+<!-- templates/show_profile.html -->
+{% extends 'mini_fb/base.html' %}
+<h1>{{article.title}}</h1>
+
+<!-- Display a single profile -->
+
+{% block content %}
+<main class="grid-container">
+  <profile class="featured">
+    {% if profile.profile_image_url %}
+    <img src="{{profile.profile_image_url}}" alt="{{profile.profile_image_url}}">
+    {% endif %}
+
+    <div>
+      <h2>{{profile.first_name}} {{profile.last_name}}</h2>
+      <p>
+        {{profile.city}}
+      </p>
+    </div>
+  </profile>
+
+  <!-- <div>
+    <h2>Comments</h2>
+    Call article's get_comments() method
+
+
+    {% for c in article.get_comments %}
+
+    <div>
+      <strong>by {{c.author}} at {{c.published}}</strong>
+
+      <p>
+        {{c.text}}
+      </p>
+    </div>
+
+    {% endfor %}
+  </div> -->
+
+</main>
+{% endblock %}

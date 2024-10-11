@@ -8,13 +8,19 @@
   {% for p in profiles %}
   <profile>
     {% if p.profile_image_url %}
-    <img src="{{p.profile_image_url}}" alt="{{p.profile_image_url}}">
+    <a href="{% url 'profile' p.pk %}">
+      <img src="{{p.profile_image_url}}" alt="{{p.profile_image_url}}">
+    </a>
     {% endif %}
 
     <div>
-      <h2>{{p.first_name}} {{p.last_name}}</h2>
+      <a href="{% url 'profile' p.pk %}">
+        <h2>{{p.first_name}} {{p.last_name}}</h2>
+      </a>
       <p>
-        {{p.city}}
+        <a href="{% url 'profile' p.pk %}">
+          {{p.city}}
+        </a>
       </p>
     </div>
   </profile>

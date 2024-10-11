@@ -8,6 +8,13 @@
   <link rel="stylesheet" href="{% static 'styles-blog.css' %}">
 </head>
 
+<nav>
+  <ul>
+    <a href="{% url 'show_all' %}">Show All</a>
+    <a href="{% url 'random' %}">Random</a>
+  </ul>
+</nav>
+
 <body>
   <header>
     <h1>Blog</h1>

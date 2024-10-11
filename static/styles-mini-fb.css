@@ -1,7 +1,7 @@
 /* This CSS was derived from NetNinja's multi-column grid example. */
 /* I took this from the example in class */
 body {
-  margin: 30px;
+  margin: 15px;
   background: rgb(25, 71, 25);
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 
@@ -9,12 +9,13 @@ body {
 
 a:link,
 a:visited {
-  text-decoration: none;
   color: rgb(25, 71, 25);
-  /* padding: 14px 25px; */
-  /* text-align: center; */
-  text-decoration: none;
   display: inline-block;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 ul,
@@ -118,7 +119,7 @@ profile.featured {
 
 profile img,
 profile.featured img {
-  width: 100%;
+  width: 90%;
   max-width: 300px;
   border: 4px solid #fff;
 

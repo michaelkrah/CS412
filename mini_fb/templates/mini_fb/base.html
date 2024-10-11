@@ -5,12 +5,21 @@
 
 <head>
   <title>Mini Facebook</title>
-  <link rel="stylesheet" href="https://cs-people.bu.edu/mickra/styles-mini-fb.css">
+  <link rel="stylesheet" href="{% static 'styles-mini-fb.css' %}">
+  <!-- <link rel="stylesheet" href="https://cs-people.bu.edu/mickra/styles-mini-fb.css"> -->
 </head>
 
 <body>
   <header>
-    <h1>Mini Facebook</h1>
+    <a href="{% url 'show_all_profiles_view' %}">
+
+      <h1>Mini Facebook </h1>
+
+
+      <h5>All Profiles</h5>
+
+    </a>
+
   </header>
 
   {% block content %}
