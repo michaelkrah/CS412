@@ -19,23 +19,23 @@
     </div>
   </profile>
 
-  <!-- <div>
-    <h2>Comments</h2>
-    Call article's get_comments() method
+  <div>
+    <h2>Status Messages</h2>
 
 
-    {% for c in article.get_comments %}
+    {% for s in profile.get_status_messages %}
 
     <div>
-      <strong>by {{c.author}} at {{c.published}}</strong>
-
       <p>
-        {{c.text}}
+        {{s.message}}
+      </p>
+      <p>
+        {{s.published}}
       </p>
     </div>
 
     {% endfor %}
-  </div> -->
+  </div>
 
 </main>
 {% endblock %}
