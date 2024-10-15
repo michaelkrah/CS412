@@ -1,6 +1,5 @@
 <!-- templates/show_profile.html -->
 {% extends 'mini_fb/base.html' %}
-<h1>{{article.title}}</h1>
 
 <!-- Display a single profile -->
 
@@ -16,6 +15,10 @@
       <p>
         {{profile.city}}
       </p>
+
+      <a href="{% url 'create_status' profile.pk   %}">
+        <p>Create a status message</p>
+      </a>
     </div>
   </profile>
 

@@ -21,6 +21,7 @@ class Profile(models.Model):
     messages = StatusMessage.objects.filter(profile=self)
     return messages
   
+  
 
 class StatusMessage(models.Model):
   '''Describes a status message on a profile'''
