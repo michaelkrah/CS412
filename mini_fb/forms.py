@@ -31,3 +31,5 @@ class CreateStatusMessageForm(forms.ModelForm):
   class Meta:
       model = StatusMessage 
       fields = ['message'] 
+
+

@@ -7,7 +7,10 @@ import random
 # Create your views here.
 
 from . models import *
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
+from . forms import *
+from django.urls import reverse
+
 
 # Class-based view
 class ShowAllView(ListView):
@@ -41,3 +44,17 @@ class ArticleView(DetailView):
   template_name = 'blog/article.html'
   context_object_name = 'article'
 
+
+
+class CreateArticleView(CreateView):
+  '''View to create a new article instance.'''
+
+  form_class = CreateArticleForm
+  template_name = 'blog/create_article_form.html'
+
+  def form_valid(self, form):
+    '''add some debuggin statements'''
+
+    print(f"Form data form.cleaned_data={form.cleaned_data}")
+
+    return super().form_valid(form)

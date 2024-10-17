@@ -1,5 +1,6 @@
 # Define data models for use in the blog application
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 
@@ -12,7 +13,9 @@ class Article(models.Model):
   author = models.TextField(blank=False)
   text = models.TextField(blank=False)
   published = models.DateTimeField(auto_now=True)
-  image_url = models.URLField(blank=True) ## New field
+  # image_url = models.URLField(blank=True) ## New field
+
+  image_file = models.ImageField(blank=True)
 
 
   def __str__(self):
@@ -26,6 +29,12 @@ class Article(models.Model):
 
     comments = Comment.objects.filter(article=self)
     return comments
+  
+  def get_absolute_url(self):
+    '''
+    Return the URL to view one instance of this object
+    '''
+    return reverse('article', kwargs={'pk': self.pk})
 
 
 class Comment(models.Model):
