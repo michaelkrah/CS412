@@ -19,6 +19,10 @@
       <a href="{% url 'create_status' profile.pk   %}">
         <p>Create a status message</p>
       </a>
+      <br>
+      <a href="{% url 'update_profile' profile.pk   %}">
+        <p>Update your profile</p>
+      </a>
     </div>
   </profile>
 
@@ -29,12 +33,19 @@
     {% for s in profile.get_status_messages %}
 
     <div>
+      {% for img in s.get_images %}
+      <img class="status-images" src='{{img.image_file.url}}' alt='{{img.image_file.url}}'>
+      {% endfor %}
+
       <p>
         {{s.message}}
       </p>
       <p>
         {{s.published}}
       </p>
+
+      <a href="{% url 'update_status' s.pk %}">Update</a>
+      <a href="{% url 'delete_status' s.pk %}">Delete</a>
     </div>
 
     {% endfor %}

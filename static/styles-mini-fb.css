@@ -94,6 +94,10 @@ main {
   grid-template-columns: 1fr;
 }
 
+.status-images {
+  max-width: 90%;
+}
+
 nav {
   /* vertical-align: top; */
   border-top: 1px solid #150484;

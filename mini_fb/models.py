@@ -31,5 +31,26 @@ class StatusMessage(models.Model):
   message = models.TextField(blank=False)
   published = models.DateTimeField(auto_now=True)
 
+  def get_images(self):
+    '''gets all the images related to a status message'''
+
+    images = Image.objects.filter(status_message=self)
+    return images
+
   def __str__(self):
     return f'{self.message}'
+  
+
+  
+
+class Image(models.Model):
+  '''Describes a single image attached to a Profile'''
+
+  status_message = models.ForeignKey("StatusMessage", on_delete=models.CASCADE)
+
+  image_file = models.ImageField(blank=True)
+  published = models.DateTimeField(auto_now=True) 
+
+
+  def __str__(self):
+    return f'{self.image_file.url}'
