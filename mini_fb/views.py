@@ -108,6 +108,7 @@ class DeleteStatusMessageView(DeleteView):
     return reverse("profile", kwargs={"pk":profile.pk})
   
 class UpdateStatusMessageView(UpdateView):
+  '''view to update a status message'''
   model = StatusMessage
   form_class = UpdateStatusMessageForm
   template_name = "mini_fb/update_status_form.html"
