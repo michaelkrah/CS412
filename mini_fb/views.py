@@ -146,3 +146,10 @@ class ShowFriendSuggestionsView(DetailView):
   model = Profile
   template_name = 'mini_fb/show_friend_suggestions.html'
   context_object_name = 'profile'
+
+class ShowNewsFeedView(DetailView):
+  '''view to display friend suggestions'''
+  
+  model = Profile
+  template_name = 'mini_fb/news_feed.html'
+  context_object_name = 'profile'

@@ -34,6 +34,7 @@ class Profile(models.Model):
     return profiles_list
   
   def add_friend(self, other):
+    '''method to add more friends'''
     # make sure no friends exist 
     existing_friends = self.get_friends() + other.get_friends()
     if self in existing_friends or other in existing_friends:
@@ -49,6 +50,7 @@ class Profile(models.Model):
     return
   
   def get_friend_suggestions(self):
+    '''method to return a list of related friends'''
     friends_list = self.get_friends()
     friend_suggestions = []
     for friend in friends_list:
@@ -59,6 +61,19 @@ class Profile(models.Model):
           friend_suggestions.append(f2)
     
     return friend_suggestions
+  
+
+  def get_news_feed(self):
+    '''returns a list of status messages for a profile's friends'''
+
+    friend_list = self.get_friends()
+    status_list = []
+    for friend in friend_list:
+      friend_status = list(StatusMessage.objects.filter(profile__pk=friend.pk))
+      status_list += friend_status
+
+    sorted_status_list = sorted(status_list, key=lambda status: status.published, reverse=True)
+    return sorted_status_list
 
   
 

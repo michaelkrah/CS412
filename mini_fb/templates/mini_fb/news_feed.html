@@ -1,0 +1,29 @@
+{% extends 'mini_fb/base.html' %}
+
+{% block content %}
+
+{% for status in profile.get_news_feed %}
+
+<main>
+  <a href="{% url 'profile' profile.pk %}">Return to Profile</a>
+</main>
+
+<main>
+  <div>
+    <br>
+    <img class="news-images" src="{{status.profile.profile_image_url}}" alt="{{status.profile.profile_image_url}}">
+    <h2> {{status.profile.first_name}} {{status.profile.last_name}} at {{status.published}}</h2>
+
+    {% for img in status.get_images %}
+    <img class="news-images-2" src='{{img.image_file.url}}' alt='{{img.image_file.url}}'>
+    {% endfor %}
+
+    <h4>{{status}}</h4>
+
+    <br>
+
+  </div>
+</main>
+{% endfor %}
+
+{% endblock %}
