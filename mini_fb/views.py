@@ -24,12 +24,15 @@ class ShowProfilePageView(DetailView):
   model = Profile
   template_name = 'mini_fb/show_profile.html'
   context_object_name = 'profile'
+  
 
 class CreateProfileView(CreateView):
   '''View for users to create new profiles'''
 
   form_class = CreateProfileForm
   template_name = 'mini_fb/create_profile_form.html'
+
+  
 
   # def form_valid(self, form: BaseModelForm) -> HttpResponse:
   #   profile = Profile.objects.get(pk=self.kwargs['pk'])

@@ -20,7 +20,29 @@ class Profile(models.Model):
 
     messages = StatusMessage.objects.filter(profile=self)
     return messages
+
+  def get_friends(self):
+    '''get a list of friends for a specific profile'''
+    print(Friend.objects.filter(friend1__pk=self.pk) | Friend.objects.filter(friend2__pk=self.pk))
+    friends_list = list(Friend.objects.filter(friend1__pk=self.pk) | Friend.objects.filter(friend2__pk=self.pk))
+    profiles_list = []
+    for relationship in friends_list:
+      if relationship.friend1.pk != self.pk:
+        profiles_list.append(relationship.friend1)
+      else:
+        profiles_list.append(relationship.friend2)
+    return profiles_list
   
+
+class Friend(models.Model):
+  '''Model to store a friend relationship between two people'''
+
+  friend1 = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="friend1")
+  friend2 = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="friend2")
+  anniversary = models.DateTimeField(auto_now=True)
+
+  def __str__(self):
+    return f'{self.friend1.first_name} {self.friend1.last_name} & {self.friend2.first_name} {self.friend2.last_name} '
   
 
 class StatusMessage(models.Model):

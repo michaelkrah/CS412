@@ -4,35 +4,59 @@
 <!-- Display a single profile -->
 
 {% block content %}
-<main class="grid-container">
-  <profile class="featured">
-    {% if profile.profile_image_url %}
-    <img src="{{profile.profile_image_url}}" alt="{{profile.profile_image_url}}">
-    {% endif %}
+<main>
+  <information class="grid-container">
+    <profile class="featured">
+      {% if profile.profile_image_url %}
+      <img src="{{profile.profile_image_url}}" alt="{{profile.profile_image_url}}">
+      {% endif %}
 
-    <div>
-      <h2>{{profile.first_name}} {{profile.last_name}}</h2>
-      <p>
-        {{profile.city}}
-      </p>
+      <div>
+        <h2>{{profile.first_name}} {{profile.last_name}}</h2>
+        <p>
+          {{profile.city}}
+        </p>
 
-      <a href="{% url 'create_status' profile.pk   %}">
-        <p>Create a status message</p>
-      </a>
-      <br>
-      <a href="{% url 'update_profile' profile.pk   %}">
-        <p>Update your profile</p>
-      </a>
-    </div>
-  </profile>
+        <a href="{% url 'create_status' profile.pk   %}">
+          <p>Create a status message</p>
+        </a>
+        <br>
+        <a href="{% url 'update_profile' profile.pk   %}">
+          <p>Update your profile</p>
+        </a>
+      </div>
+    </profile>
+  </information>
+
 
   <div>
-    <h2>Status Messages</h2>
+    <h2>Friends</h2>
 
+    <friends class="grid-container">
+
+      {% for f in profile.get_friends %}
+      <div>
+        <a href="{%url 'profile' f.pk %}">
+          <img class="friends-images" src="{{f.profile_image_url}}" alt="{{f.profile_image_url}}">
+          <br>  
+          {{f.first_name}} {{f.last_name}}
+        </a>
+      </div>
+      {% endfor %}
+
+    </friends>
+  </div>
+
+
+
+  <h2>Status Messages</h2>
+
+
+  <status_messages class="grid-container">
 
     {% for s in profile.get_status_messages %}
-
     <div>
+
       {% for img in s.get_images %}
       <img class="status-images" src='{{img.image_file.url}}' alt='{{img.image_file.url}}'>
       {% endfor %}
@@ -49,7 +73,8 @@
     </div>
 
     {% endfor %}
-  </div>
+  </status_messages>
+
 
 </main>
 {% endblock %}
