@@ -33,6 +33,34 @@ class Profile(models.Model):
         profiles_list.append(relationship.friend2)
     return profiles_list
   
+  def add_friend(self, other):
+    # make sure no friends exist 
+    existing_friends = self.get_friends() + other.get_friends()
+    if self in existing_friends or other in existing_friends:
+      print("Already have a friendship")
+      return 
+    elif self.pk == other.pk:
+      print("Someone can't be friends with themselves")
+      return
+    
+    friend = Friend(friend1=self, friend2=other)
+    friend.save()
+    print(f"Friendship created between {self} and {other}")
+    return
+  
+  def get_friend_suggestions(self):
+    friends_list = self.get_friends()
+    friend_suggestions = []
+    for friend in friends_list:
+      
+      friends_of_friends = friend.get_friends()
+      for f2 in friends_of_friends:
+        if f2 not in friend_suggestions and f2.pk != self.pk and f2 not in friends_list:
+          friend_suggestions.append(f2)
+    
+    return friend_suggestions
+
+  
 
 class Friend(models.Model):
   '''Model to store a friend relationship between two people'''

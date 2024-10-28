@@ -5,9 +5,12 @@ from django.shortcuts import render
 # Create your views here.
 
 from . models import *
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from . forms import *
 from django.urls import reverse
+
+from django.shortcuts import get_object_or_404, redirect
+
 
 # Class-based view
 class ShowAllProfilesView(ListView):
@@ -121,3 +124,25 @@ class UpdateStatusMessageView(UpdateView):
 
     profile = self.object.profile
     return reverse("profile", kwargs={"pk":profile.pk})
+
+
+class CreateFriendView(View):
+  '''view to create a friendship between two profiles'''
+  def dispatch(self, request, *args, **kwargs):
+      profile_id = self.kwargs.get('pk')
+      other_id = self.kwargs.get('other_pk')
+
+      profile = get_object_or_404(Profile, pk=profile_id)
+      other_profile = get_object_or_404(Profile, pk=other_id)
+
+      profile.add_friend(other_profile)
+
+
+      return redirect('profile', pk=profile_id)
+
+class ShowFriendSuggestionsView(DetailView):
+  '''view to display friend suggestions'''
+  
+  model = Profile
+  template_name = 'mini_fb/show_friend_suggestions.html'
+  context_object_name = 'profile'
