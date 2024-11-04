@@ -21,7 +21,14 @@
     </tr>
 
   </table>
-
-
 </form>
+
+<table>
+  <form action="{% url 'profile' profile.pk  %}">
+    <input type="submit" name="Cancel" value="Cancel">
+  </form>
+  </td>
+  </tr>
+</table>
+
 {% endblock %}

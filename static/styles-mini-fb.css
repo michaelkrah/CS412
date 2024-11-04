@@ -35,6 +35,10 @@ h6 {
   color: #150484;
 }
 
+.h-header {
+  display: inline;
+}
+
 strong {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: #150484;

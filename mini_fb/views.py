@@ -8,6 +8,8 @@ from . models import *
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from . forms import *
 from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -46,7 +48,7 @@ class CreateProfileView(CreateView):
     return reverse("profile", args=[self.object.pk])
   
 
-class CreateStatusMessageView(CreateView):
+class CreateStatusMessageView(LoginRequiredMixin, CreateView):
   '''View to create new status messages'''
 
   form_class = CreateStatusMessageForm
@@ -71,6 +73,15 @@ class CreateStatusMessageView(CreateView):
 
 
     return super().form_valid(form)
+  
+  def dispatch(self, request, *args, **kwargs):
+    profile = self.get_object()
+    if profile.user != request.user:
+        return redirect(reverse('show_all_profiles_view'))
+    return super().dispatch(request, *args, **kwargs)
+  
+  def get_login_url(self):
+    return reverse('show_all_profiles_view')
 
   def get_success_url(self):
     '''return the url to redirect to'''
@@ -92,7 +103,7 @@ class CreateStatusMessageView(CreateView):
       return context
   
 
-class UpdateProfileView(UpdateView):
+class UpdateProfileView(LoginRequiredMixin, UpdateView):
   '''view to update a profile'''
   model = Profile
   form_class = UpdateProfileForm
@@ -102,7 +113,20 @@ class UpdateProfileView(UpdateView):
     return reverse("profile", kwargs=self.kwargs)
   
 
-class DeleteStatusMessageView(DeleteView):
+  def dispatch(self, request, *args, **kwargs):
+    profile = self.get_object()
+    if profile.user != request.user:
+        return redirect(reverse('show_all_profiles_view'))
+    return super().dispatch(request, *args, **kwargs)
+  
+  
+  def get_login_url(self):
+    return reverse('show_all_profiles_view')
+
+
+  
+
+class DeleteStatusMessageView(LoginRequiredMixin, DeleteView):
   '''view to delete a status message'''
   model = StatusMessage
   template_name = "mini_fb/delete_status_form.html"
@@ -113,7 +137,17 @@ class DeleteStatusMessageView(DeleteView):
     profile = self.object.profile
     return reverse("profile", kwargs={"pk":profile.pk})
   
-class UpdateStatusMessageView(UpdateView):
+
+  def dispatch(self, request, *args, **kwargs):
+    profile = self.get_object()
+    if profile.user != request.user:
+        return redirect(reverse('show_all_profiles_view'))
+    return super().dispatch(request, *args, **kwargs)
+
+  def get_login_url(self):
+    return reverse('show_all_profiles_view')
+  
+class UpdateStatusMessageView(LoginRequiredMixin, UpdateView):
   '''view to update a status message'''
   model = StatusMessage
   form_class = UpdateStatusMessageForm
@@ -124,9 +158,20 @@ class UpdateStatusMessageView(UpdateView):
 
     profile = self.object.profile
     return reverse("profile", kwargs={"pk":profile.pk})
+  
+
+  def dispatch(self, request, *args, **kwargs):
+    profile = self.get_object()
+    if profile.user != request.user:
+        return redirect(reverse('show_all_profiles_view'))
+    return super().dispatch(request, *args, **kwargs)
 
 
-class CreateFriendView(View):
+  def get_login_url(self):
+    return reverse('show_all_profiles_view')
+
+
+class CreateFriendView(LoginRequiredMixin, View):
   '''view to create a friendship between two profiles'''
   def dispatch(self, request, *args, **kwargs):
       profile_id = self.kwargs.get('pk')
@@ -139,17 +184,48 @@ class CreateFriendView(View):
 
 
       return redirect('profile', pk=profile_id)
+  
 
-class ShowFriendSuggestionsView(DetailView):
+  def dispatch(self, request, *args, **kwargs):
+    profile = self.get_object()
+    if profile.user != request.user:
+        return redirect(reverse('show_all_profiles_view'))
+    return super().dispatch(request, *args, **kwargs)
+
+  def get_login_url(self):
+    return reverse('show_all_profiles_view')
+
+class ShowFriendSuggestionsView(LoginRequiredMixin, DetailView):
   '''view to display friend suggestions'''
   
   model = Profile
   template_name = 'mini_fb/friend_suggestions.html'
   context_object_name = 'profile'
 
-class ShowNewsFeedView(DetailView):
+
+  def dispatch(self, request, *args, **kwargs):
+    profile = self.get_object()
+    if profile.user != request.user:
+        return redirect(reverse('show_all_profiles_view'))
+    return super().dispatch(request, *args, **kwargs)
+
+  def get_login_url(self):
+    return reverse('show_all_profiles_view')
+
+class ShowNewsFeedView(LoginRequiredMixin, DetailView):
   '''view to display friend suggestions'''
   
   model = Profile
   template_name = 'mini_fb/news_feed.html'
   context_object_name = 'profile'
+
+
+  def dispatch(self, request, *args, **kwargs):
+    profile = self.get_object()
+    if profile.user != request.user:
+        return redirect(reverse('show_all_profiles_view'))
+    return super().dispatch(request, *args, **kwargs)
+
+  def get_login_url(self):
+    return reverse('show_all_profiles_view')
+

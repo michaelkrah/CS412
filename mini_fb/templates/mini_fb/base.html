@@ -5,7 +5,7 @@
 
 <head>
   <title>Mini Facebook</title>
-  <link rel="stylesheet" href="https://cs-people.bu.edu/mickra/styles-mini-fb.css">
+  <link rel="stylesheet" href="{% static 'styles-mini-fb.css' %}">
   <!-- <link rel="stylesheet" href="https://cs-people.bu.edu/mickra/styles-mini-fb.css"> -->
 </head>
 
@@ -16,9 +16,24 @@
     <a href="{% url 'show_all_profiles_view' %}">
       <h5>All Profiles</h5>
     </a>
+    {% if request.user.is_authenticated %}
+    <h5 class="h-header">
+      Logged in: {{request.user}}
+    </h5>
+    <form method="POST" class="h-header" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <input type="submit" value="Logout">
+    </form>
+    {% else %}
+    <h5 class="h-header">
+      Not logged in.
+    </h5>
+    <a href="{% url 'login' %}">Login</a>
     <a href="{% url 'create_profile' %}">
-      <h5> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Create a Profile</h5>
+      <h5> &nbsp; Create a Profile</h5>
     </a>
+    {% endif %}
+
 
 
   </header>

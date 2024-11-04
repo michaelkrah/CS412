@@ -1,0 +1,18 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+
+<h1>Login </h1>
+
+
+<form method="POST" action="{% url 'login' %}">
+
+  {% csrf_token %}
+  {{form}}
+  <input type="hidden" name="next" value="{% url 'show_all' %}">
+  <input type="submit" value="Login">
+
+
+</form>
+
+{% endblock %}

@@ -17,6 +17,8 @@
           {{profile.city}}
         </p>
 
+        {% if request.user.is_authenticated and request.user.pk == profile.user.pk %}
+
         <a href="{% url 'create_status' profile.pk   %}">
           <p>Create a status message</p>
         </a>
@@ -32,6 +34,12 @@
         <a href="{% url 'news_feed' profile.pk   %}">
           <p>News Feed</p>
         </a>
+
+        {% else %}
+
+        <p>You are not logged into this profile and cannot edit it.</p>
+
+        {% endif %}
       </div>
     </profile>
   </information>
