@@ -19,19 +19,19 @@
 
         {% if request.user.is_authenticated and request.user.pk == profile.user.pk %}
 
-        <a href="{% url 'create_status' profile.pk   %}">
+        <a href="{% url 'create_status'   %}">
           <p>Create a status message</p>
         </a>
         <br>
-        <a href="{% url 'update_profile' profile.pk   %}">
+        <a href="{% url 'update_profile' %}">
           <p>Update your profile</p>
         </a>
         <br>
-        <a href="{% url 'friend_suggestions' profile.pk   %}">
+        <a href="{% url 'friend_suggestions' %}">
           <p>Suggested Friends</p>
         </a>
         <br>
-        <a href="{% url 'news_feed' profile.pk   %}">
+        <a href="{% url 'news_feed'   %}">
           <p>News Feed</p>
         </a>
 

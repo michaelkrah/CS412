@@ -12,7 +12,7 @@
   {% for friend in profile.get_friend_suggestions %}
 
   <div>
-    <a href="{% url  'add_friend' profile.pk friend.pk %}">Add friend</a>
+    <a href="{% url  'add_friend' friend.pk %}">Add friend</a>
 
     <a href="{% url 'profile' friend.pk %}">
       <img class="friends-images" src="{{friend.profile_image_url}}" alt="{{friend.profile_image_url}}"> <br>

@@ -1,3 +1,6 @@
+from typing import Any
+from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
 from django.forms import BaseModelForm
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -56,7 +59,7 @@ class CreateStatusMessageView(LoginRequiredMixin, CreateView):
 
 
   def form_valid(self, form: BaseModelForm) -> HttpResponse:
-    profile = Profile.objects.get(pk=self.kwargs['pk'])
+    profile = self.get_object()
     form.instance.profile = profile
     print(f"Form data form.cleaned_data={form.cleaned_data}")
 
@@ -75,18 +78,20 @@ class CreateStatusMessageView(LoginRequiredMixin, CreateView):
     return super().form_valid(form)
   
   def dispatch(self, request, *args, **kwargs):
+    
     profile = self.get_object()
     if profile.user != request.user:
         return redirect(reverse('show_all_profiles_view'))
     return super().dispatch(request, *args, **kwargs)
+
   
   def get_login_url(self):
     return reverse('show_all_profiles_view')
 
   def get_success_url(self):
     '''return the url to redirect to'''
-    return reverse("profile", kwargs=self.kwargs)
-
+    profile_pk = self.get_object().pk
+    return reverse("profile", kwargs={"pk": profile_pk})
 
   def get_context_data(self, **kwargs: any) -> dict[str, any]:
       '''build dict of key value pairs'''
@@ -94,13 +99,16 @@ class CreateStatusMessageView(LoginRequiredMixin, CreateView):
       context = super().get_context_data(**kwargs)
 
       # find the article with the PK from the URL
-      # self.kwargs['pk'] is finding the article PK from the URL
-      profile = Profile.objects.get(pk=self.kwargs['pk'])
+      # self.kwargs['pk'] is finding the article f from the URL
+      profile = self.get_object()
 
       # add the article to the context data
       context['profile'] = profile
 
       return context
+  
+  def get_object(self):
+    return get_object_or_404(Profile, user=self.request.user)
   
 
 class UpdateProfileView(LoginRequiredMixin, UpdateView):
@@ -110,8 +118,9 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
   template_name = 'mini_fb/update_profile_form.html'
   
   def get_success_url(self):
-    return reverse("profile", kwargs=self.kwargs)
-  
+    profile_pk = self.get_object().pk
+    return reverse("profile", kwargs={"pk": profile_pk})
+    
 
   def dispatch(self, request, *args, **kwargs):
     profile = self.get_object()
@@ -122,9 +131,16 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
   
   def get_login_url(self):
     return reverse('show_all_profiles_view')
-
-
   
+  def get_object(self):
+
+    return get_object_or_404(Profile, user=self.request.user)
+
+    # profile = self.get_object()
+    # user = User.objects.filter(profile=profile)
+    # return super().get_object(queryset)
+
+
 
 class DeleteStatusMessageView(LoginRequiredMixin, DeleteView):
   '''view to delete a status message'''
@@ -139,7 +155,8 @@ class DeleteStatusMessageView(LoginRequiredMixin, DeleteView):
   
 
   def dispatch(self, request, *args, **kwargs):
-    profile = self.get_object()
+    statusmessage = self.get_object()
+    profile = statusmessage.profile
     if profile.user != request.user:
         return redirect(reverse('show_all_profiles_view'))
     return super().dispatch(request, *args, **kwargs)
@@ -161,7 +178,7 @@ class UpdateStatusMessageView(LoginRequiredMixin, UpdateView):
   
 
   def dispatch(self, request, *args, **kwargs):
-    profile = self.get_object()
+    profile = self.get_object().profile
     if profile.user != request.user:
         return redirect(reverse('show_all_profiles_view'))
     return super().dispatch(request, *args, **kwargs)
@@ -173,27 +190,29 @@ class UpdateStatusMessageView(LoginRequiredMixin, UpdateView):
 
 class CreateFriendView(LoginRequiredMixin, View):
   '''view to create a friendship between two profiles'''
+
+
   def dispatch(self, request, *args, **kwargs):
-      profile_id = self.kwargs.get('pk')
+      profile = self.get_object()
       other_id = self.kwargs.get('other_pk')
 
-      profile = get_object_or_404(Profile, pk=profile_id)
       other_profile = get_object_or_404(Profile, pk=other_id)
+
+      if profile.user != request.user:
+        return redirect(reverse('show_all_profiles_view'))
+
 
       profile.add_friend(other_profile)
 
 
-      return redirect('profile', pk=profile_id)
-  
-
-  def dispatch(self, request, *args, **kwargs):
-    profile = self.get_object()
-    if profile.user != request.user:
-        return redirect(reverse('show_all_profiles_view'))
-    return super().dispatch(request, *args, **kwargs)
+      profile_pk = self.get_object().pk
+      return redirect(reverse('profile', kwargs={"pk":profile_pk}))
 
   def get_login_url(self):
     return reverse('show_all_profiles_view')
+  
+  def get_object(self):
+    return get_object_or_404(Profile, user=self.request.user)
 
 class ShowFriendSuggestionsView(LoginRequiredMixin, DetailView):
   '''view to display friend suggestions'''
@@ -211,6 +230,9 @@ class ShowFriendSuggestionsView(LoginRequiredMixin, DetailView):
 
   def get_login_url(self):
     return reverse('show_all_profiles_view')
+  
+  def get_object(self):
+    return get_object_or_404(Profile, user=self.request.user)
 
 class ShowNewsFeedView(LoginRequiredMixin, DetailView):
   '''view to display friend suggestions'''
@@ -229,3 +251,6 @@ class ShowNewsFeedView(LoginRequiredMixin, DetailView):
   def get_login_url(self):
     return reverse('show_all_profiles_view')
 
+
+  def get_object(self):
+    return get_object_or_404(Profile, user=self.request.user)

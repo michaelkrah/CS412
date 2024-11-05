@@ -20,7 +20,7 @@
     <h5 class="h-header">
       Logged in: {{request.user}}
     </h5>
-    <form method="POST" class="h-header" action="{% url 'logout' %}">
+    <form method="POST" class="h-header" action="{% url 'mini_fb_logout' %}">
       {% csrf_token %}
       <input type="submit" value="Logout">
     </form>
@@ -28,7 +28,7 @@
     <h5 class="h-header">
       Not logged in.
     </h5>
-    <a href="{% url 'login' %}">Login</a>
+    <a href="{% url 'mini_fb_login' %}">Login</a>
     <a href="{% url 'create_profile' %}">
       <h5> &nbsp; Create a Profile</h5>
     </a>
