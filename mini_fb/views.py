@@ -13,6 +13,10 @@ from . forms import *
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import User
+from django.contrib.auth import login
+
 
 from django.shortcuts import get_object_or_404, redirect
 
@@ -40,11 +44,22 @@ class CreateProfileView(CreateView):
   form_class = CreateProfileForm
   template_name = 'mini_fb/create_profile_form.html'
 
-  
+  def form_valid(self, form: BaseModelForm) -> HttpResponse:
 
-  # def form_valid(self, form: BaseModelForm) -> HttpResponse:
-  #   profile = Profile.objects.get(pk=self.kwargs['pk'])
-  #   return super().form_valid(form)
+    user_form = UserCreationForm(self.request.POST)
+    
+    if user_form.is_valid():
+        user = user_form.save()
+        form.instance.user = user
+        return super().form_valid(form)
+
+    return self.form_invalid(form)
+
+
+  def get_context_data(self, **kwargs: Any):
+    context = super().get_context_data(**kwargs)
+    context['user_creation_form'] = UserCreationForm()
+    return context
 
   def get_success_url(self):
     '''return the url to redirect to'''
