@@ -1,0 +1,25 @@
+{% load static %}
+<html>
+
+<head>
+  <title>Voter Analytics</title>
+  <!-- <link rel="stylesheet" href="{% static 'stylesheet-marathon.css' %}"> -->
+  <link rel="stylesheet" href="https://cs-people.bu.edu/mickra/stylesheet-marathon.css">
+</head>
+
+<body>
+  <header>
+    <h1>Voter Analytics</h1>
+    <nav>
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a> <a href="{% url 'graphs' %}">Graphs</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  {% block content %}
+  {% endblock %}
+
+</body>
+
+</html>

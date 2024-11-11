@@ -21,6 +21,4 @@ urlpatterns = [
   path(r'logout/', auth_views.LogoutView.as_view(template_name='mini_fb/logged_out.html'), name='mini_fb_logout'),
 
   path(r'status/create_status', views.CreateStatusMessageView.as_view(), name="create_status_2"),
-
-
 ]

@@ -1,0 +1,118 @@
+<!-- search.html -->
+
+<h2>Search Form</h2>
+<form action="{% url 'graphs' %}">
+  <table>
+    <tr>
+      <th>Party Affiliation:</th>
+      <td>
+        <select name="affiliation" id="affiliation">
+          <option value="">All parties</option>
+          <option value="D">Democrat</option>
+          <option value="R">Republican</option>
+          <option value="U">Unaffiliated</option>
+          <option value="CC">Constitution Party</option>
+          <option value="L">Libertarian Party</option>
+          <option value="T">Tea Party</option>
+          <option value="G">Green Party</option>
+          <option value="J">Independent Party</option>
+          <option value="Q">Reform Party</option>
+          <option value="FF">Freedom Party</option>
+          <option value="O">Other</option>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <th>Minimum Birth Year:</th>
+
+      <td>
+        <select name="min_birth" id="min_birth">
+          <option value="">Select Year</option>
+          {% for b in birth_years %}
+          <option value="{{b}}">{{b}}</option>
+          {% endfor %}
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <th>Maximum Birth Year:</th>
+
+      <td>
+        <select name="max_birth" id="max_birth">
+          <option value="">Select Year</option>
+          {% for b in birth_years %}
+          <option value="{{b}}">{{b}}</option>
+          {% endfor %}
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <th>Voter Score</th>
+
+      <td>
+        <select name="voter_score" id="voter_score">
+          <option value="">Select Score</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <th>Voted in Elections:</th>
+      <td>
+        <label>
+          <input type="checkbox" name="v20state" value="true"> 2020 State Election
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <label>
+          <input type="checkbox" name="v21town" value="true"> 2021 Town Election
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <label>
+          <input type="checkbox" name="v21primary" value="true"> 2021 Primary Election
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <label>
+          <input type="checkbox" name="v22general" value="true"> 2022 General Election
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <label>
+          <input type="checkbox" name="v23town" value="true"> 2023 Town Election
+        </label>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+
+      </td>
+      <td>
+        <input type="submit">
+      </td>
+    </tr>
+  </table>
+
+</form>

@@ -1,0 +1,78 @@
+<!-- templates/voter_analytics/results.html -->
+{% extends 'voter_analytics/base.html' %}
+{% block content %}
+<div class="container">
+
+
+  <h1>Voter Info</h1>
+  <div class="row">
+    <table>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Date of Birth</th>
+
+      </tr>
+      <tr>
+        <td>{{v.first_name}} </td>
+        <td>{{v.last_name}}</td>
+
+
+        <td>{{v.date_of_birth}}</td>
+
+      </tr>
+
+    </table>
+
+  </div>
+
+  <h1>Address</h1>
+  <table>
+    <tr>
+      <th>Street Address</th>
+      <th>Zip Code</th>
+      <th>Google Maps</th>
+
+    </tr>
+    <tr>
+      {% if v.apartment_number %}
+      <td>{{v.street_number}} {{v.street_name}}, Apt {{v.apartment_number}} </td>
+      {% else %}
+      <td>{{v.street_number}} {{v.street_name}}, {{v.zip_code}} </td>
+      {% endif %}
+      <td>{{v.zip_code}} </td>
+
+
+      <td><a href="https://www.google.com/maps/?q={{v.street_number}} {{v.street_name}}, {{v.zip_code}}"
+          target="_blank">Open in Google
+          Maps</a></td>
+    </tr>
+  </table>
+
+
+  <h1>Political Info</h1>
+
+  <table>
+    <tr>
+      <th>Party Affiliation</th>
+      <th>Voter Score</th>
+      <th>2020 State Election</th>
+      <th>2021 Town Election</th>
+      <th>2021 Primary Election</th>
+      <th>2022 General Election</th>
+      <th>2023 Town Election</th>
+    </tr>
+
+    <tr>
+      <td>{{v.party}}</td>
+      <td>{{v.voter_score}}</td>
+      <td>{{v.v20state}}</td>
+      <td>{{v.v21town}}</td>
+      <td>{{v.v21primary}}</td>
+      <td>{{v.v22general}}</td>
+      <td>{{v.v23town}}</td>
+
+    </tr>
+  </table>
+
+  {% endblock %}
