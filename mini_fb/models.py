@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
   '''Encapsulates the data for a profile of a given user'''
 
-
   user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="mini_fb_profiles")
 
   first_name = models.TextField(blank=False)

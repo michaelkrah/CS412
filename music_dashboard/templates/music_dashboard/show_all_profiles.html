@@ -1,0 +1,16 @@
+{% extends 'music_dashboard/base.html' %}
+
+
+{% block content %}
+
+{% for p in profiles %}
+<profile>
+  <a href="{% url 'profile' p.pk %}">
+    {{p.first_name}} {{p.last_name}}
+  </a>
+
+</profile>
+<br>
+{% endfor %}
+
+{% endblock %}

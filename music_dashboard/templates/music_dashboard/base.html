@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="">
+</head>
+
+<body>
+
+  <header>
+    <h1>Songs Page</h1>
+    {% if request.user.is_authenticated %}
+    Logged in: {{request.user}}
+    <form method="POST" class="h-header" action="{% url 'music_dashboard_logout' %}">
+      {% csrf_token %}
+      <input type="submit" value="Logout">
+    </form>
+    {% else %}
+
+    <a href="{% url 'music_dashboard_login' %}">Login</a>
+    <a href="{% url 'create_profile' %}">Create Account</a>
+
+    {% endif %}
+
+    <br>
+    <br>
+
+  </header>
+  {% block content %}
+  {% endblock %}
+
+</body>
+
+</html>

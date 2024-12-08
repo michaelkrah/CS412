@@ -1,0 +1,14 @@
+{% extends 'music_dashboard/base.html' %}
+
+
+{% block content %}
+
+<main>
+  <h1>You have been logged out</h1>
+  <a href="{% url 'main_page' %}">Home</a>
+
+  <a href="{% url 'music_dashboard_login' %}">Log in again</a>
+</main>
+
+
+{% endblock %}

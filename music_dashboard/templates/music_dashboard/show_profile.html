@@ -1,0 +1,17 @@
+{% extends 'music_dashboard/base.html' %}
+
+{% block content %}
+
+<a href="{% url 'main_page' %}">Back to Home</a> <br>
+
+{{profile.first_name}} {{profile.last_name}}
+
+{% if request.user.is_authenticated and request.user.pk == profile.user.pk %}
+correct user, add songs?
+
+{% else %}
+incorrect user
+
+{% endif %}
+
+{% endblock %}

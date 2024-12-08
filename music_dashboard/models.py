@@ -20,6 +20,38 @@ class Profile(models.Model):
     '''return a string representation'''
     return f"{self.first_name} {self.last_name}"
   
+  def get_friends(self):
+    '''get all friends related to this profile'''
+    friends_list = list(Friend.objects.filter(friend1__pk=self.pk) | Friend.objects.filter(friend2__pk=self.pk))
+    profiles_list = []
+    for relationship in friends_list:
+      if relationship.friend1.pk != self.pk:
+        profiles_list.append(relationship.friend1)
+      else:
+        profiles_list.append(relationship.friend2)
+    return profiles_list
+  
+  def add_friend(self, other):
+    '''method to add another profile as a friend relationship'''
+    existing_friends = self.get_friends() + other.get_friends()
+    if self in existing_friends or other in existing_friends:
+      print("Already have a friendship")
+      return 
+    elif self.pk == other.pk:
+      print("Someone can't be friends with themselves")
+      return
+  
+    friend = Friend(friend1=self, friend2=other)
+    friend.save()
+    print(f"Friendship created between {self} and {other}")
+    return
+  
+  def is_friend(self, other):
+    '''method to check if another profile is a friend'''
+    friends_list = self.get_friends()
+    return other in friends_list
+
+
   def get_listens(self):
     '''gets all songs listened to by this profile'''
 
@@ -33,13 +65,22 @@ class Profile(models.Model):
     return playlists
   
 
+class Friend(models.Model):
+  '''Model to refer to a friend connection between two profiles'''
+  friend1 = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="friend1")
+  friend2 = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="friend2")
+  anniversary = models.DateTimeField(auto_now=True)
+
+  def __str__(self):
+    return f'{self.friend1.first_name} {self.friend1.last_name} & {self.friend2.first_name} {self.friend2.last_name} '
+
+
 class Artist(models.Model):
   '''Model to refer to a specific music artist or band'''
 
   name = models.TextField(blank=False)
   genre = models.TextField(blank=False)
 
-  
   def __str__(self):
     return f'Artist {self.name}'
   
@@ -51,7 +92,6 @@ class Album(models.Model):
   name = models.TextField(blank=False)
   released_date = models.DateField(auto_now=True)
   number_songs = models.IntegerField(blank=False)
-
 
   def __str__(self):
     return f'Album {self.name} by {self.artist}'
@@ -66,8 +106,7 @@ class Song(models.Model):
   album_song = models.IntegerField(blank=True)
 
   def __str__(self):
-    return f'Song {self.name} by {self.artist} '
-
+    return f'{self.name} by {self.artist} '
 
 class Listen(models.Model):
   '''Model to refer to a song listened to by a profile at a specific time'''
@@ -94,4 +133,3 @@ class PlaylistSong(models.Model):
 
   def __str__(self):
     return f'Song {self.song} on playlist {self.playlist}'
-
