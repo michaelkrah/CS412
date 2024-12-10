@@ -89,7 +89,7 @@ class Artist(models.Model):
   image = models.TextField(blank=False)
 
   def __str__(self):
-    return f'Artist {self.name}, genres: {self.genre}'
+    return f'Artist {self.name}'
 
 
   def get_genre(self):
@@ -130,7 +130,7 @@ class Song(models.Model):
   spotify_id = models.TextField(blank=False) # useful to associate with uploaded values
 
   def __str__(self):
-    return f'{self.name} by {self.artist}, {self.spotify_id} '
+    return f'{self.name} by {self.artist}, ({self.spotify_id}) '
 
 class Listen(models.Model):
   '''Model to refer to a song listened to by a profile at a specific time'''
@@ -149,7 +149,11 @@ class Playlist(models.Model):
   profile = models.ForeignKey("Profile", on_delete=models.CASCADE)
 
   def __str__(self):
-    return f'Playlist {self.name} by {self.profile}'
+    return f'{self.name} by {self.profile}'
+  
+  def get_songs(self):
+    playlist_songs = list(PlaylistSong.objects.filter(playlist=self))
+    return playlist_songs
   
 
 class PlaylistSong(models.Model):
@@ -158,7 +162,7 @@ class PlaylistSong(models.Model):
   playlist = models.ForeignKey("Playlist", on_delete=models.CASCADE)
 
   def __str__(self):
-    return f'Song {self.song} on playlist {self.playlist}'
+    return f'{self.song} on playlist {self.playlist}'
   
 
 

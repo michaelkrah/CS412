@@ -35,3 +35,10 @@ class CreatePlaylistForm(forms.ModelForm):
   class Meta:
     model = Playlist   
     fields = ['name']
+
+class UpdatePlaylistForm(forms.ModelForm):
+  '''form class to create a new playlist from recently listened to songs'''
+
+  class Meta:
+    model = Playlist   
+    fields = ['name']

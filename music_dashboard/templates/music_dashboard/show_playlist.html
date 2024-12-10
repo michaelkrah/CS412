@@ -1,0 +1,37 @@
+{% extends 'music_dashboard/base.html' %}
+
+{% block content %}
+
+<a href="{% url 'profile' profile.pk %}">Return to Profile</a>
+
+{{playlist.name}}
+
+<table>
+  <th>Name</th>
+  <th>Artist</th>
+  <th>Release Date</th>
+  {% if request.user.is_authenticated and request.user.pk == profile.user.pk %}
+  <th>Remove from Playlist:</th>
+  {% endif %}
+
+
+  {% for ps in playlist_songs %}
+
+  <tr>
+    <td>{{ps.song.name}}</td>
+    <td>{{ps.song.artist}}</td>
+    <td>{{ps.song.release_date}}</td>
+    {% if request.user.is_authenticated and request.user.pk == profile.user.pk %}
+    <td><a href="{% url 'delete_playlist_song' ps.pk %}">Remove </a></td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+
+</table>
+
+{% if request.user.is_authenticated and request.user.pk == profile.user.pk %}
+<a href="{% url 'update_playlist' playlist.pk %}">Modify Playlist</a>
+{% endif %}
+
+
+{% endblock %}

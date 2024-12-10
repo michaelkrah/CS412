@@ -55,7 +55,14 @@ Playlists: <br>
 
 {% for p in playlists %}
 
-{{p.name}} <br>
+<a href="{% url  'playlist' p.pk %}">{{p.name}}</a>
+
+{% if request.user.is_authenticated and request.user.pk == profile.user.pk %}
+<a href="{% url  'delete_playlist' p.pk %}">Delete Playlist</a>
+
+{% endif %}
+
+<br>
 
 {% endfor %}
 

@@ -1,0 +1,26 @@
+/* This CSS was derived from NetNinja's multi-column grid example. */
+/* I took this from the example in class */
+body {
+  margin: 15px;
+  background: #121212;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+}
+
+.top-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #121212;
+  border-radius: 15px;
+  color: white;
+}
+
+.center-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #535353;
+  border-radius: 15px;
+  color: white;
+}

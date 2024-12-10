@@ -18,5 +18,8 @@ urlpatterns = [
   path(r'profile/update', views.EditProfileView.as_view(), name="edit_profile"),
   path(r'profile/create_playlist', views.CreatePlaylistView.as_view(), name="create_playlist"),
   path(r'profile/modify_playlist/<int:pk>', views.UpdatePlaylistView.as_view(), name="update_playlist"),
+  path(r'playlist/<int:pk>', views.PlaylistDetail.as_view(), name="playlist"),
+  path(r'delete_playlist/<int:pk>', views.DeletePlaylist.as_view(), name="delete_playlist"),
+  path(r'delete_playlist_song/<int:pk>', views.DeletePlaylistSong.as_view(), name="delete_playlist_song"),
 
-] 
+]

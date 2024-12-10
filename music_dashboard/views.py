@@ -5,8 +5,8 @@ from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.forms import BaseModelForm
 from django.http import HttpResponse
-from django.views.generic import ListView, DetailView, CreateView, View, UpdateView
-from .models import Profile, Listen, Song, Artist
+from django.views.generic import ListView, DetailView, CreateView, View, UpdateView, DeleteView
+from .models import Profile, Listen, Song, Artist, PlaylistSong
 from . forms import *
 import json
 
@@ -330,6 +330,19 @@ class CreatePlaylistView(LoginRequiredMixin, CreateView):
           redirect("main_page")
 
     form.instance.profile = request_user_profile
+    playlist = form.save()
+
+    songs_to_add = self.request.POST.get('songs_to_add', '')
+    if songs_to_add:
+        song_names = [name.strip() for name in songs_to_add.split(',') if name.strip()]
+        for song_name in song_names:
+            # Retrieve or handle the song by its name
+            try:
+                song = Song.objects.get(name__iexact=song_name)
+                PlaylistSong.objects.create(song=song, playlist=playlist)
+            except Song.DoesNotExist:
+                print(f"Song '{song_name}' does not exist.")
+
 
     return super().form_valid(form)
   
@@ -349,9 +362,145 @@ class CreatePlaylistView(LoginRequiredMixin, CreateView):
 class UpdatePlaylistView(LoginRequiredMixin, UpdateView):
   '''view to update a playlist'''
   model = Playlist
+  form_class = UpdatePlaylistForm
   template_name = 'music_dashboard/update_playlist_form.html'
+  content_object_name = "playlist"
 
-# each detailed song view should have a link to add to a playlist, will open up a new page where a playlist can be chosen
-# update playlist view can be used to delete songs
+  def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+     
+    context = super().get_context_data(**kwargs)
+    playlist = self.get_object()
+    context["profile"] = playlist.profile
+    return context
+  
+  def form_valid(self, form: BaseModelForm) -> HttpResponse:
+    request_user_profile = None
+
+
+    if self.request.user.is_authenticated:
+      try:
+          request_user_profile = self.request.user.get_profile()
+      except ObjectDoesNotExist:
+          print("Could not find profile")
+          redirect("main_page")
+
+    playlist = self.get_object()
+
+    songs_to_add = self.request.POST.get('songs_to_add', '')
+    if songs_to_add:
+        song_names = [name.strip() for name in songs_to_add.split(',') if name.strip()]
+        for song_name in song_names:
+            try:
+                song = Song.objects.get(name__iexact=song_name)
+                PlaylistSong.objects.create(song=song, playlist=playlist)
+            except Song.DoesNotExist:
+                print(f"Song '{song_name}' does not exist.")
+
+
+    return super().form_valid(form)
+
+  def get_success_url(self):
+      playlist = self.get_object()
+      return reverse("playlist", kwargs={"pk": playlist.pk})
+
+
+  def get_login_url(self):
+    return reverse('main_page')
+
+
+
+class PlaylistDetail(LoginRequiredMixin, DetailView):
+  '''Detailed view of a playlist, can access controls to modify a playlist from here'''
+  model = Playlist
+  template_name = 'music_dashboard/show_playlist.html'
+  context_object_name = 'playlist'
+
+  def dispatch(self, request, *args, **kwargs):
+    
+    if not request.user.is_authenticated:
+      return redirect('main_page')
+    
+    request_user_profile = None
+
+    if self.request.user.is_authenticated:
+      try:
+          request_user_profile = self.request.user.get_profile()
+      except ObjectDoesNotExist:
+          pass
+
+    
+    playlist = self.get_object()
+    profile = playlist.profile
+
+    if not profile.is_friend(request_user_profile) and not request_user_profile.pk == profile.pk:
+       return redirect('main_page')
+    
+  
+    return super().dispatch(request, *args, **kwargs)
+  
+
+
+
+  def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+     
+    context = super().get_context_data(**kwargs)
+    playlist = self.get_object()
+
+    playlist_songs = playlist.get_songs()
+
+    context["playlist_songs"] = playlist_songs
+    context["profile"] = playlist.profile
+    return context
+
+
+  def get_login_url(self):
+    return reverse('main_page')
+
+class DeletePlaylistSong(LoginRequiredMixin, DeleteView):
+  '''view to delete an entry in a playlist'''
+  model = PlaylistSong
+  template_name = "music_dashboard/delete_playlist_song.html"
+  context_object_name = "playlist_song"
+
+  def get_success_url(self):
+    playlist_song = self.get_object()
+    playlist = playlist_song.playlist
+    return reverse("playlist", kwargs={"pk":playlist.pk})
+
+  def dispatch(self, request, *args, **kwargs):
+    playlist_song = self.get_object()
+    profile = playlist_song.playlist.profile
+    if profile.user != request.user:
+        return redirect(reverse('main_page'))
+    return super().dispatch(request, *args, **kwargs)
+
+  def get_login_url(self):
+    return reverse('main_page')
+
+class DeletePlaylist(LoginRequiredMixin, DeleteView):
+  '''view to delete an entire playlist'''
+  model = Playlist
+  template_name = "music_dashboard/delete_playlist.html"
+  context_object_name = "playlist"
+
+  def get_success_url(self):
+    playlist = self.get_object()
+    profile = playlist.profile
+    return reverse("profile", kwargs={"pk":profile.pk})
+
+  def dispatch(self, request, *args, **kwargs):
+    playlist = self.get_object()
+    profile = playlist.profile
+    if profile.user != request.user:
+        return redirect(reverse('main_page'))
+    return super().dispatch(request, *args, **kwargs)
+
+  def get_login_url(self):
+    return reverse('main_page')
+
+# update playlist view can be used to delete songs or add more through text box
 # can also delete playlists from profile
 # also should have a detailed playlist view
+
+# stretch:
+# each detailed song view should have a link to add to a playlist, will open up a new page where a playlist can be chosen
