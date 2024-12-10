@@ -4,14 +4,66 @@
 
 <a href="{% url 'main_page' %}">Back to Home</a> <br>
 
-{{profile.first_name}} {{profile.last_name}}
+
+{{profile.first_name}} {{profile.last_name}} {{profile.profile_image_url}}
+<br>
 
 {% if request.user.is_authenticated and request.user.pk == profile.user.pk %}
-correct user, add songs?
+This is your profile page <br>
+
+<form method="POST" enctype="multipart/form-data" action="{% url 'music_dashboard_upload_listens' %}">
+  {% csrf_token %}
+  <input type="file" name="json_file" accept=".json">
+  <button type="submit">Upload</button>
+</form>
+
+<a href="{% url 'edit_profile' %}">Edit profile page</a> <br>
+<a href="{% url 'create_playlist' %}">Create a playlist</a> <br>
+
 
 {% else %}
-incorrect user
+Not your profile page <br>
 
 {% endif %}
+
+{% if request.user.is_authenticated and request_user_is_friend_with_profile %}
+
+You are friends with this user <br>
+
+{% else %}
+{% if request.user.is_authenticated and request_user_profile != profile %}
+
+<a href="{% url  'music_dashboard_add_friend' profile.pk %}">Add friend</a>
+<br>
+
+{% endif %}
+{% endif %}
+
+
+{% if request_user_is_friend_with_profile or request.user.pk == profile.user.pk %}
+
+Last 50 Songs Played: <br>
+
+
+{% for l in last_50_listens %}
+
+<a href="https://open.spotify.com/track/{{l.song.spotify_id}}">{{l.song.name}}</a> <br>
+
+{% endfor %}
+
+Playlists: <br>
+
+{% for p in playlists %}
+
+{{p.name}} <br>
+
+{% endfor %}
+
+{% else %}
+
+Not friends, cannot see listens or profiles
+
+{% endif %}
+
 
 {% endblock %}

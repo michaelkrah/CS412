@@ -10,4 +10,5 @@ admin.site.register(Song)
 admin.site.register(Listen)
 admin.site.register(Playlist)
 admin.site.register(PlaylistSong)
+admin.site.register(Friend)
 

@@ -1,0 +1,55 @@
+{% extends 'music_dashboard/base.html' %}
+
+
+{% block content %}
+
+<div class="container">
+
+
+  <h1>Artist Info</h1>
+  <div class="row">
+    <table>
+
+      <tr>
+        <td>{{artist.name}} </td>
+
+
+        <td>{{artist.genre}}</td>
+
+        <td><img src="{{artist.image}}" alt="Image of the artist"></td>
+
+      </tr>
+
+    </table>
+
+  </div>
+
+  <h1>Albums</h1>
+  <table>
+    {% for a in albums %}
+    <tr>
+      <td><img src="{{a.image}}" alt="Album cover"></td>
+      <td>{{a.name}}</td>
+      <td>{{a.release_date}}</td>
+      <td>{{a.number_songs}}</td>
+    </tr>
+
+    {% endfor %}
+  </table>
+
+  <h1>Songs</h1>
+  <table>
+    {% for s in songs %}
+    <tr>
+      <td>{{s.name}}</td>
+      <td>{{s.album}}</td>
+      <td><a href="https://open.spotify.com/track/{{s.spotify_id}}">Listen on Spotify</a></td>
+    </tr>
+
+    {% endfor %}
+  </table>
+
+
+
+
+  {% endblock %}

@@ -12,7 +12,7 @@
 <body>
 
   <header>
-    <h1>Songs Page</h1>
+    <h1>Music Dashboard</h1>
     {% if request.user.is_authenticated %}
     Logged in: {{request.user}}
     <form method="POST" class="h-header" action="{% url 'music_dashboard_logout' %}">
@@ -26,9 +26,12 @@
 
     {% endif %}
 
-    <br>
-    <br>
 
+    <a href="{% url 'main_page' %}">Main Page</a>
+    <a href="{% url 'songs' %}">Songs Database</a>
+
+    <br>
+    <br>
   </header>
   {% block content %}
   {% endblock %}

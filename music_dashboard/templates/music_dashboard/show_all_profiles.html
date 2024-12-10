@@ -3,6 +3,14 @@
 
 {% block content %}
 
+{% if request.user.is_authenticated %}
+
+<a href="{% url 'profile' request_user_profile.pk %}">Go to your profile</a>
+
+<a href="{% url 'feed' %}">Feed</a> <br>
+
+{% endif %}
+
 {% for p in profiles %}
 <profile>
   <a href="{% url 'profile' p.pk %}">
