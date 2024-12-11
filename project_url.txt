@@ -1,1 +1,1 @@
-https://cs412-examples.herokuapp.com/music_dashboard/
+https://blooming-inlet-18891-8c88bc18535b.herokuapp.com/music_dashboard/
