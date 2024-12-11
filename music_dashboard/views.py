@@ -255,6 +255,9 @@ class ShowFeedView(LoginRequiredMixin, DetailView):
 
   def dispatch(self, request, *args, **kwargs):
     '''makes sure the profile is correctly associated with the logged in user'''
+    if not request.user.is_authenticated:
+      return redirect('main_page')
+
     profile = self.get_object()
     
     if profile.user != request.user:
@@ -360,6 +363,8 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
 
   def dispatch(self, request, *args, **kwargs):
     '''security check to make sure user can edit correct profile'''
+    if not request.user.is_authenticated:
+      return redirect('main_page')
     profile = self.get_object()
     if profile.user != request.user:
         return redirect(reverse('main_page'))
@@ -552,6 +557,8 @@ class DeletePlaylistSong(LoginRequiredMixin, DeleteView):
 
   def dispatch(self, request, *args, **kwargs):
     '''ensure that the playlist song is correctly associated with the profile of the user'''
+    if not request.user.is_authenticated:
+      return redirect('main_page')
     playlist_song = self.get_object()
     profile = playlist_song.playlist.profile
     if profile.user != request.user:
@@ -575,7 +582,8 @@ class DeletePlaylist(LoginRequiredMixin, DeleteView):
 
   def dispatch(self, request, *args, **kwargs):
     '''ensure that the playlist is correctly associated with the profile of the user'''
-
+    if not request.user.is_authenticated:
+      return redirect('main_page')
     playlist = self.get_object()
     profile = playlist.profile
     if profile.user != request.user:
