@@ -18,3 +18,5 @@ Spotify allows users to download JSON a file containing their listening history 
 ]
 
 After users have created an account, these files can be uploaded on their profile to share their listening history, see others' listening history, create and share playlists, and see a database of songs. This application assumes that songs uploaded by the users already correspond to Song objects saved in Django's database. I've included a sample data file that can be uploaded, sampleData.json, if someone wants to create a new account and test data uploads.
+
+Important: This project assumes that any uploaded listen or song of interest is already in the local database. It will be impossible to add songs to playlists or upload listens of songs that have not been added. All songs that were added were added in the models.py file using a specific json file format that was created with queries from the spotify api.

@@ -420,12 +420,19 @@ class CreatePlaylistView(LoginRequiredMixin, CreateView):
     if songs_to_add:
         song_names = [name.strip() for name in songs_to_add.split(',') if name.strip()]
         for song_name in song_names:
-            # Retrieve or handle the song by its name
             try:
-                song = Song.objects.get(name__iexact=song_name)
-                PlaylistSong.objects.create(song=song, playlist=playlist)
-            except Song.DoesNotExist:
-                print(f"Song '{song_name}' does not exist.")
+                matching_songs = Song.objects.filter(name__iexact=song_name)
+                if matching_songs.exists():
+                    if matching_songs.count() == 1:
+                        song = matching_songs.first()
+                        PlaylistSong.objects.create(song=song, playlist=playlist)
+                    else:
+                        song = matching_songs.first()
+                        PlaylistSong.objects.create(song=song, playlist=playlist)
+                else:
+                    print(f"Song '{song_name}' does not exist.")
+            except Exception as e:
+                print(f"Error handling song '{song_name}': {e}")
 
 
     return super().form_valid(form)
