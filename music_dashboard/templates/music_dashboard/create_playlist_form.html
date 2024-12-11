@@ -1,41 +1,45 @@
+<!-- html page to create a playlist object to be associated with a user -->
+
 {% extends 'music_dashboard/base.html' %}
 
 
 {% block content %}
 
-<form method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
+<div class="container">
+  <h1>Create a Playlist</h1>
 
 
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <table>
+
+      {{form.as_table}}
+
+      <tr>
+        <td>
+          Songs to Add:
+        </td>
+        <td>
+          <textarea name="songs_to_add" cols="40" rows="10" required="" id="id_songs" ,
+            placeholder="Enter song names separated by commas"></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td> <input type="submit" name="Create Playlist"> </td>
+      </tr>
+
+    </table>
+  </form>
 
   <table>
-
-    {{form.as_table}}
-
-    <tr>
-      <td>
-        Songs to Add:
-      </td>
-      <td>
-        <textarea name="songs_to_add" cols="40" rows="10" required="" id="id_songs" ,
-          placeholder="Enter song names separated by commas"></textarea>
-      </td>
+    <td>
+      <form action="{% url 'profile' request_user_profile.pk %}">
+        <input type="submit" name="Cancel" value="Cancel">
+      </form>
+    </td>
     </tr>
-    <tr>
-      <td> <input type="submit" name="Create Playlist"> </td>
-    </tr>
-
   </table>
-</form>
 
-<table>
-  <td>
-    <form action="{% url 'profile' request_user_profile.pk %}">
-      <input type="submit" name="Cancel" value="Cancel">
-    </form>
-  </td>
-  </tr>
-</table>
-
-
+</div>
 {% endblock %}

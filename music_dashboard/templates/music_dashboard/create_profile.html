@@ -1,46 +1,49 @@
+<!-- html file to create a new profile object -->
+
 {% extends 'music_dashboard/base.html' %}
 
 
 {% block content %}
 
-<h2>Create a new profile</h2>
+<div class="container">
+  <h1>Create a new profile</h1>
 
-<form method="POST">
-  {% csrf_token %}
+  <form method="POST">
+    {% csrf_token %}
+
+    <table>
+
+
+      {% for field in form %}
+      <tr>
+        <td>{{ field.label_tag }}</td>
+        <td>{{ field }}</td>
+      </tr>
+
+      {% endfor %}
+
+      <tr>
+        <td></td>
+      </tr>
+
+      {{user_creation_form.as_table}}
+      <tr>
+        <td> <input type="submit" name="Create Profile"> </td>
+      </tr>
+
+    </table>
+
+
+
+  </form>
 
   <table>
-
-
-    {% for field in form %}
-    <tr>
-      <td>{{ field.label_tag }}</td>
-      <td>{{ field }}</td>
+    <form action="{% url 'main_page'  %}">
+      <input type="submit" name="Cancel" value="Cancel">
+    </form>
+    </td>
     </tr>
-
-    {% endfor %}
-
-    <tr>
-      <td></td>
-    </tr>
-
-    {{user_creation_form.as_table}}
-    <tr>
-      <td> <input type="submit" name="Create Profile"> </td>
-    </tr>
-
   </table>
-
-
-
-</form>
-
-<table>
-  <form action="{% url 'show_all_profiles_view'  %}">
-    <input type="submit" name="Cancel" value="Cancel">
-  </form>
-  </td>
-  </tr>
-</table>
-
+</div>
 
 {% endblock %}

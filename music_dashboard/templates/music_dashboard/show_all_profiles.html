@@ -1,24 +1,41 @@
+<!-- Main page of the application, displays all created profiles -->
+
 {% extends 'music_dashboard/base.html' %}
 
 
 {% block content %}
 
 {% if request.user.is_authenticated %}
+<br>
+<div class="center-div">
+  <a href="{% url 'profile' request_user_profile.pk %}" class="button">Go to your profile</a>
 
-<a href="{% url 'profile' request_user_profile.pk %}">Go to your profile</a>
+  <a href="{% url 'feed' %}" class="button">Feed</a> <br>
+</div>
 
-<a href="{% url 'feed' %}">Feed</a> <br>
+<br>
 
 {% endif %}
 
-{% for p in profiles %}
-<profile>
-  <a href="{% url 'profile' p.pk %}">
-    {{p.first_name}} {{p.last_name}}
-  </a>
+<main class="grid-container">
 
-</profile>
-<br>
-{% endfor %}
+  {% for p in profiles %}
+  <profile class="profile">
+    {% if p.profile_image_url %}
+    <a href="{% url 'profile' p.pk %}">
+      <img src="{{p.profile_image_url}}" alt="{{p.profile_image_url}}" class="profile-img">
+    </a>
+    {% endif %}
+    <br>
+
+    <a href="{% url 'profile' p.pk %}">
+      {{p.first_name}} {{p.last_name}}
+    </a>
+
+  </profile>
+  <br>
+  {% endfor %}
+
+</main>
 
 {% endblock %}

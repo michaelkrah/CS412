@@ -24,20 +24,20 @@ class CreateProfileForm(forms.ModelForm):
       }
 
 class EditProfileForm(forms.ModelForm):
-  '''Allows users to update a profile'''
+  '''Form class for users to update a profile'''
   class Meta:
       model = Profile
       fields = ['first_name', 'last_name', 'city', 'email_address', 'profile_image_url']
 
 class CreatePlaylistForm(forms.ModelForm):
-  '''form class to create a new playlist from recently listened to songs'''
+  '''Form class to create a new playlist from a string input of songs'''
 
   class Meta:
     model = Playlist   
     fields = ['name']
 
 class UpdatePlaylistForm(forms.ModelForm):
-  '''form class to create a new playlist from recently listened to songs'''
+  '''Form class to update a playlist to add new songs or change the name'''
 
   class Meta:
     model = Playlist   

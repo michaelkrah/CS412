@@ -1,3 +1,5 @@
+<!-- html page to display a detailed artist view -->
+
 {% extends 'music_dashboard/base.html' %}
 
 
@@ -9,26 +11,32 @@
   <h1>Artist Info</h1>
   <div class="row">
     <table>
-
+      <tr>
+        <th>Name</th>
+        <th>Genre</th>
+        <th>Photo</th>
+      </tr>
       <tr>
         <td>{{artist.name}} </td>
-
-
-        <td>{{artist.genre}}</td>
-
-        <td><img src="{{artist.image}}" alt="Image of the artist"></td>
-
+        <td>{{artist.get_genre}}</td>
+        <td><img src="{{artist.image}}" alt="Image of the artist" class="profile-img"></td>
       </tr>
-
     </table>
 
   </div>
 
   <h1>Albums</h1>
   <table>
+
+    <tr>
+      <th>Photo</th>
+      <th>Name</th>
+      <th>Release Date</th>
+      <th>Number of Tracks</th>
+    </tr>
     {% for a in albums %}
     <tr>
-      <td><img src="{{a.image}}" alt="Album cover"></td>
+      <td><img src="{{a.image}}" alt="Album cover" class="profile-img"></td>
       <td>{{a.name}}</td>
       <td>{{a.release_date}}</td>
       <td>{{a.number_songs}}</td>

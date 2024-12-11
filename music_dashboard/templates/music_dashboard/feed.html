@@ -1,8 +1,35 @@
+<!-- html form to display a feed of what friends are listening to -->
+
 {% extends 'music_dashboard/base.html' %}
 
 
 {% block content %}
 
-feed
+<div class="container">
+  <h1>Songs Your Friends Recently Listened To</h1>
+
+  <div class="section">
+    <div class="song-list">
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Time</th>
+          <th>Listener</th>
+        </tr>
+
+        {% for l in recent_listens %}
+        <tr>
+          <td><a href="https://open.spotify.com/track/{{ l.song.spotify_id }}" target="_blank">{{ l.song.name }} by
+              {{l.song.artist}}</a></td>
+          <td>{{l.time}}</td>
+          <td>{{l.profile}}</td>
+        </tr>
+
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+</div>
 
 {% endblock %}

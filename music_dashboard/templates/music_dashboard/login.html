@@ -1,18 +1,24 @@
+<!-- html file to display login page -->
+
+
 {% extends 'music_dashboard/base.html' %}
 
 {% block content %}
 
-<h1>Login</h1>
+<div class="container">
 
-<form method="POST" action="{% url 'music_dashboard_login' %}">
+  <h1>Login</h1>
 
-  {% csrf_token %}
-  {{form}}
-  <input type="hidden" name="next" value="{% url 'main_page' %}">
-  <input type="submit" value="Login">
+  <form method="POST" action="{% url 'music_dashboard_login' %}">
+
+    {% csrf_token %}
+    {{form}}
+    <input type="hidden" name="next" value="{% url 'main_page' %}">
+    <input type="submit" value="Login">
 
 
-</form>
+  </form>
 
+</div>
 
 {% endblock %}

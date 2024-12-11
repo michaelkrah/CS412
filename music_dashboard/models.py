@@ -5,10 +5,6 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 import ast
 
-
-
-# Create your models here.
-
 class Profile(models.Model):
   '''Encapsulates the data for a profile of a given user'''
 
@@ -53,19 +49,19 @@ class Profile(models.Model):
     return
   
   def is_friend(self, other):
-    '''method to check if another profile is a friend'''
+    '''method to check if another profile is a friend, returns true or false'''
     friends_list = self.get_friends()
     return other in friends_list
 
 
   def get_listens(self):
-    '''gets all songs listened to by this profile'''
+    '''returns a queryset of  all songs listened to by this profile'''
 
     listens = Listen.objects.filter(profile=self)
     return listens
   
   def get_playlists(self):
-    '''get all playlists related to this profile'''
+    '''returns a queryset of all playlists created by this profile'''
     playlists = Playlist.objects.filter(profile=self)
 
     return playlists
@@ -78,21 +74,25 @@ class Friend(models.Model):
   anniversary = models.DateTimeField(auto_now=True)
 
   def __str__(self):
+    '''returns a string representation'''
     return f'{self.friend1.first_name} {self.friend1.last_name} & {self.friend2.first_name} {self.friend2.last_name} '
 
 
 class Artist(models.Model):
-  '''Model to refer to a specific music artist or band'''
+  '''Model to refer to a specific musical artist or band'''
 
   name = models.TextField(blank=False)
   genre = models.TextField(blank=False)
   image = models.TextField(blank=False)
 
   def __str__(self):
-    return f'Artist {self.name}'
+    '''returns a string representation'''
+
+    return f'{self.name}'
 
 
   def get_genre(self):
+    '''returns a single genre from the attributes list of genres'''
     genre_list = ast.literal_eval(self.genre)
     if len(genre_list) > 0:
       
@@ -101,10 +101,12 @@ class Artist(models.Model):
       return "No genre found"
     
   def get_albums(self):
+    '''returns all albums by this artist'''
     albums_list = list(Album.objects.filter(artist=self))
     return albums_list
 
   def get_songs(self):
+    '''returns all songs by this artist'''
     songs_list = list(Song.objects.filter(artist=self))
     return songs_list
 
@@ -118,6 +120,8 @@ class Album(models.Model):
   image = models.TextField(blank=False)
 
   def __str__(self):
+    '''returns a string representation'''
+
     return f'Album {self.name} by {self.artist}'
   
 
@@ -127,9 +131,11 @@ class Song(models.Model):
   release_date = models.DateField()
   artist = models.ForeignKey("Artist", on_delete=models.CASCADE)
   album = models.ForeignKey("Album", on_delete=models.CASCADE)
-  spotify_id = models.TextField(blank=False) # useful to associate with uploaded values
+  spotify_id = models.TextField(blank=False) # useful to associate with uploaded values, can link to spotify songs
 
   def __str__(self):
+    '''returns a string representation'''
+
     return f'{self.name} by {self.artist}, ({self.spotify_id}) '
 
 class Listen(models.Model):
@@ -141,6 +147,8 @@ class Listen(models.Model):
 
 
   def __str__(self):
+    '''returns a string representation'''
+
     return f'User {self.profile} listened to {self.song} at {self.time}'
 
 class Playlist(models.Model):
@@ -149,9 +157,12 @@ class Playlist(models.Model):
   profile = models.ForeignKey("Profile", on_delete=models.CASCADE)
 
   def __str__(self):
+    '''returns a string representation'''
+
     return f'{self.name} by {self.profile}'
   
   def get_songs(self):
+    '''returns a list of all songs that belong to a specific playlist'''
     playlist_songs = list(PlaylistSong.objects.filter(playlist=self))
     return playlist_songs
   
@@ -162,6 +173,8 @@ class PlaylistSong(models.Model):
   playlist = models.ForeignKey("Playlist", on_delete=models.CASCADE)
 
   def __str__(self):
+    '''returns a string representation'''
+
     return f'{self.song} on playlist {self.playlist}'
   
 
@@ -178,14 +191,14 @@ User.add_to_class("get_profile", get_profile)
 
 def load_data():
   '''Load songs, albums, and artist data records so that when listens are uploaded more detailed data is available
-  The file is a JSON made of individual song data from the spotify API
-  It is split into artist, album and song objects so that when listening data is uploaded that is missing data, 
-  it can be locally matched up with more detailed information.
+  The DetailedData file is a JSON file that contains detailed song data queried from the spotify API
+  In this function it is split into artist, album and song objects so that when listening data is
+  uploaded by a user, it can be associated with more detailed models 
   This project assumes that listening data will have a song object associated with it in Django's database'''
 
-  Song.objects.all().delete()
-  Album.objects.all().delete()
-  Artist.objects.all().delete()
+  # Song.objects.all().delete()
+  # Album.objects.all().delete()
+  # Artist.objects.all().delete()
   count = 0
 
   filename = 'C:/Users/Michael/Desktop/BU/2024 Fall/CS 412/Final/DetailedData.json'

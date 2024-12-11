@@ -1,32 +1,38 @@
+<!-- html file to delete an individual song from a selected playlist  -->
+
 {% extends 'music_dashboard/base.html' %}
 
 {% block content %}
-<h1>Are you sure you want to remove this song?</h1>
 
-<main class="grid-container">
+<div class="container">
 
+  <h1>Are you sure you want to remove this song?</h1>
 
-  <profile class="featured">
-
-    <div>
-
-      <h2>Song</h2>
-      {{playlist_song.song.name}} from {{playlist_song.playlist.name}}
+  <main class="grid-container">
 
 
-    </div>
+    <profile class="featured">
 
-  </profile>
+      <div>
 
-</main>
-
-<form method="POST" action="">
-  {% csrf_token %}
-  <input type="submit" value="Delete">
-</form>
-<form method="GET" action="{% url 'profile' playlist_song.playlist.profile.pk %}">
-  <input type="submit" value="Cancel">
-</form>
+        <h2>Song:</h2>
+        {{playlist_song.song.name}} from {{playlist_song.playlist.name}}
 
 
+      </div>
+
+    </profile>
+
+  </main>
+
+  <form method="POST" action="">
+    {% csrf_token %}
+    <input type="submit" value="Delete">
+  </form>
+
+  <form method="GET" action="{% url 'playlist' playlist_song.playlist.pk %}">
+    <input type="submit" value="Cancel">
+  </form>
+
+</div>
 {% endblock %}

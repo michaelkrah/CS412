@@ -1,3 +1,4 @@
+<!-- Base page for music_dashboard -->
 {% load static %}
 
 <!DOCTYPE html>
@@ -17,27 +18,23 @@
     </div>
     <div class="top-div">
       {% if request.user.is_authenticated %}
-      Logged in: {{request.user}}
-      <form method="POST" class="h-header" action="{% url 'music_dashboard_logout' %}">
+      <span>Logged in: {{ request.user }}</span>
+      <form method="POST" class="h-header" action="{% url 'music_dashboard_logout' %}" style="display: inline;">
         {% csrf_token %}
-        <input type="submit" value="Logout">
+        <input type="submit" value="Logout" class="button">
       </form>
       {% else %}
-
-      <a href="{% url 'music_dashboard_login' %}">Login</a>
-      <a href="{% url 'create_profile' %}">Create Account</a>
-
+      <a href="{% url 'music_dashboard_login' %}" class="button">Login</a>
+      <a href="{% url 'create_profile' %}" class="button">Create Account</a>
       {% endif %}
-
-
-
-      <a href="{% url 'main_page' %}">Main Page</a>
-      <a href="{% url 'songs' %}">Songs Database</a>
+      <a href="{% url 'main_page' %}" class="button">Main Page</a>
+      <a href="{% url 'songs' %}" class="button">Songs Database</a>
     </div>
+
   </header>
   {% block content %}
-  {% endblock %}
 
+  {% endblock %}
 </body>
 
 </html>

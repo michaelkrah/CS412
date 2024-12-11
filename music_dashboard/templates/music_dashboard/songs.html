@@ -1,17 +1,18 @@
+<!-- html page to navigate the song database and see all available songs -->
+
 {% extends 'music_dashboard/base.html' %}
 
 {% block content %}
-
 <div class="container">
-
-  <div class="row">
-
+  <div>
     {% include 'music_dashboard/search.html' %}
+
 
   </div>
 
-  <h1>Songs</h1>
+
   <div class="row">
+
     <table>
       <tr>
         <th>Name</th>
@@ -29,16 +30,11 @@
         </td>
 
         <td><a href="{% url 'artist' s.artist.pk  %}">{{s.artist.name}}</a></td>
-
         <td>{{s.album.name}}</td>
-
         <td>{{s.album.release_date}}</td>
-
         <td>{{s.artist.get_genre}}</td>
-
       </tr>
       {% endfor %}
-
     </table>
   </div>
 
@@ -50,7 +46,6 @@
       {% if page_obj.has_previous %}
       <li>
         <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
-
       </li>
       {% endif %}
       <li class="">

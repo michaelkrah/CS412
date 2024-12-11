@@ -1,3 +1,5 @@
+# Views file for music_dashboard project
+
 from django.shortcuts import render
 from typing import Any
 
@@ -23,6 +25,11 @@ from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, redirect
 
+import plotly
+import plotly.graph_objects as go
+from collections import Counter
+
+
 
 from datetime import date
 
@@ -34,6 +41,7 @@ class ShowAllProfilesView(ListView):
   context_object_name = 'profiles'
 
   def get_context_data(self, **kwargs):
+    '''get context data to attach user profile to main page view'''
     context = super().get_context_data(**kwargs)
 
     request_user_profile = None
@@ -57,7 +65,7 @@ class ShowProfilePageView(DetailView):
   context_object_name = 'profile'
 
   def get_context_data(self, **kwargs):
-    '''checks if a profile page is friends with the logged in user'''
+    '''checks if a profile page is friends with the logged in user, also creates and adds pie chart of different genres'''
     context = super().get_context_data(**kwargs)
     request_user_profile = None
     request_user_friends = []
@@ -79,16 +87,34 @@ class ShowProfilePageView(DetailView):
         
 
     listens = profile.get_listens()
-
-    listens = listens.order_by('-time')[:50]
-
+    listens_time = listens.order_by('-time')[:50]
     playlists = profile.get_playlists()
 
+    genres_count = Counter(listen.song.artist.get_genre() for listen in listens)
+    genres_count = {genre: count for genre, count in genres_count.items() if count >= 10}
+    labels = list(genres_count.keys())
+    values = list(genres_count.values())
 
+    fig = go.Pie(labels=labels, values=values)
+    pie_div = pie_div = plotly.offline.plot(
+    {
+        'data': [fig],
+        'layout': {
+            'paper_bgcolor': '#121212',  
+            'plot_bgcolor': '#121212',  
+            'font': {'color': 'white'} 
+        }
+    },
+    auto_open=False,
+    output_type='div'
+)
+
+
+    context['pie_div'] = pie_div
 
     context['request_user_profile'] = request_user_profile
     context['request_user_is_friend_with_profile'] = is_friend
-    context['last_50_listens'] = listens
+    context['last_50_listens'] = listens_time
     context['playlists'] = playlists
     return context
 
@@ -100,7 +126,7 @@ class CreateProfileView(CreateView):
   template_name = 'music_dashboard/create_profile.html'
 
   def form_valid(self, form: BaseModelForm) -> HttpResponse:
-
+    '''associates a user object with a profile object correctly'''
     user_form = UserCreationForm(self.request.POST)
     if user_form.is_valid():
         user = user_form.save()
@@ -109,6 +135,7 @@ class CreateProfileView(CreateView):
     return self.form_invalid(form)
 
   def get_context_data(self, **kwargs: Any):
+    '''attaches user creation form to html page to create a profile and user'''
     context = super().get_context_data(**kwargs)
     context['user_creation_form'] = UserCreationForm()
     return context
@@ -119,7 +146,7 @@ class CreateProfileView(CreateView):
 
 
 class SongsListView(ListView):
-  '''View to display list of voter data.'''
+  '''View to display list of songs data along with artist and album.'''
 
   template_name = 'music_dashboard/songs.html'
   model = Song
@@ -128,13 +155,13 @@ class SongsListView(ListView):
   paginate_by = 100
 
   def get_context_data(self, **kwargs: any):
-      '''add data to the context object, including graphs'''
 
       context = super().get_context_data(**kwargs)
 
       return context
   
   def get_queryset(self) -> QuerySet[any]:
+    '''filters by specific attributes as required, depending on what is included in the url'''
     qs = super().get_queryset()
     
     if "song_name" in self.request.GET:
@@ -166,6 +193,7 @@ class CreateFriendView(LoginRequiredMixin, View):
   '''view to create a friend relationship between two profiles'''
 
   def dispatch(self, request, *args, **kwargs):
+    '''checks to make sure the user is verified and checks before creating a friend to ensure necessary conditions are met'''
     
     if not request.user.is_authenticated:
       return redirect('main_page')
@@ -181,11 +209,11 @@ class CreateFriendView(LoginRequiredMixin, View):
 
     profile.add_friend(other_profile)
 
-
     profile_pk = self.get_object().pk
-    return redirect(reverse('profile', kwargs={"pk":profile_pk}))
+    return redirect(reverse('profile', kwargs={"pk":other_profile.pk}))
 
   def get_login_url(self):
+    '''redirect user that isn't logged in'''
     return reverse('main_page')
   
   def get_object(self):
@@ -193,17 +221,65 @@ class CreateFriendView(LoginRequiredMixin, View):
 
 
 
-class ShowFeedView(ListView):
+class ShowFeedView(LoginRequiredMixin, DetailView):
   '''view to display friend suggestions'''
   
   model = Profile
   template_name = 'music_dashboard/feed.html'
   context_object_name = 'profile'
 
+  def get_context_data(self, **kwargs: any):
+    '''get list of recently listened to songs for each friend of the user'''
+    context = super().get_context_data(**kwargs)
+
+    request_user_profile = None
+    try:
+      request_user_profile = self.request.user.get_profile()
+      request_user_friends = request_user_profile.get_friends()
+
+    except ObjectDoesNotExist:
+      pass
+    
+    recent_listens = []
+
+    for friend in request_user_friends:
+      listens = friend.get_listens()
+      listens = listens.order_by('-time')[:10] 
+      recent_listens.extend(listens) 
+
+    recent_listens = sorted(recent_listens, key=lambda x: x.time, reverse=True)
+
+    context['recent_listens'] = recent_listens
+
+    return context
+
+  def dispatch(self, request, *args, **kwargs):
+    '''makes sure the profile is correctly associated with the logged in user'''
+    profile = self.get_object()
+    
+    if profile.user != request.user:
+        return redirect(reverse('main_page'))
+    
+    return super().dispatch(request, *args, **kwargs)
+
+  def get_login_url(self):
+    '''redirects a user that is not logged in'''
+    return reverse('main_page')
+  
+  
+  def get_object(self):
+    return get_object_or_404(Profile, user=self.request.user)
+
+
+
+
+
 
 class UploadData(View):
-   
-   def post(self, request, *args, **kwargs):
+  '''function to upload spotify json data to the user's profile
+  will take a spotify file of listening data from their website a process each listen
+  this creates a listening object in Django's ORM and associates it with a song, artist, and album'''
+  def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect('main_page')
         
@@ -214,11 +290,10 @@ class UploadData(View):
             return redirect('main_page')
 
         try:
-            Listen.objects.all().delete()
             data = json.load(uploaded_file)
             for record in data:
               ms_played = record.get("msPlayed")
-              if ms_played > 15000: # Only add a track if it's been played for longer than 30 seconds
+              if ms_played > 15000: # Only add a track if it's been played for longer than 15 seconds, otherwise it was likely just skipped
                 track_name = record.get("trackName", "Unknown Track")
                 date=record.get("endTime")
                 datetime_obj = datetime.strptime(date, "%Y-%m-%d %H:%M")
@@ -234,7 +309,7 @@ class UploadData(View):
                                    time=datetime_obj,
                                    time_listened=time_listened
                                    )
-                  listen_db_results = list(Listen.objects.filter(time=datetime_obj))
+                  listen_db_results = list(Listen.objects.filter(time=datetime_obj, song__name=song.name))
                   if len(listen_db_results) == 0:
                     listen.save()
 
@@ -246,8 +321,6 @@ class UploadData(View):
             return redirect('main_page')
         
         return redirect("profile", pk=profile.pk)
-
-
 
 class ArtistDetail(DetailView):
   '''View to display an individual artist, showing all their songs and albums'''
@@ -280,11 +353,13 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
   template_name = 'music_dashboard/edit_profile_form.html'
   
   def get_success_url(self):
+    '''redirect the user when successful'''
     profile_pk = self.get_object().pk
     return reverse("profile", kwargs={"pk": profile_pk})
 
 
   def dispatch(self, request, *args, **kwargs):
+    '''security check to make sure user can edit correct profile'''
     profile = self.get_object()
     if profile.user != request.user:
         return redirect(reverse('main_page'))
@@ -292,6 +367,7 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
   
   
   def get_login_url(self):
+    '''redirect users that aren't logged in'''
     return reverse('main_page')
   
   def get_object(self):
@@ -304,6 +380,7 @@ class CreatePlaylistView(LoginRequiredMixin, CreateView):
   template_name = 'music_dashboard/create_playlist_form.html'
 
   def get_context_data(self, **kwargs):
+    '''associate a profile with context data for easier modification in html file'''
     context = super().get_context_data(**kwargs)
 
     request_user_profile = None
@@ -319,6 +396,8 @@ class CreatePlaylistView(LoginRequiredMixin, CreateView):
     return context
   
   def form_valid(self, form: BaseModelForm) -> HttpResponse:
+    '''saves playlist, and then iterates over list of songs provided, trying to associate each one with a song from the database,
+    if successful, it is added to the playlist'''
     request_user_profile = None
 
 
@@ -347,6 +426,7 @@ class CreatePlaylistView(LoginRequiredMixin, CreateView):
     return super().form_valid(form)
   
   def get_success_url(self):
+    '''redirect a user after success'''
     request_user_profile = None
     if self.request.user.is_authenticated:
       try:
@@ -367,15 +447,16 @@ class UpdatePlaylistView(LoginRequiredMixin, UpdateView):
   content_object_name = "playlist"
 
   def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-     
+    '''add playlist to context data for ease of access'''
     context = super().get_context_data(**kwargs)
     playlist = self.get_object()
     context["profile"] = playlist.profile
     return context
   
   def form_valid(self, form: BaseModelForm) -> HttpResponse:
+    '''add additional songs to playlist, they need to be added in the form of a csv, and are processed similarly 
+    to form_valid in CreatePlaylistView'''
     request_user_profile = None
-
 
     if self.request.user.is_authenticated:
       try:
@@ -400,6 +481,7 @@ class UpdatePlaylistView(LoginRequiredMixin, UpdateView):
     return super().form_valid(form)
 
   def get_success_url(self):
+      '''redirect user on success'''
       playlist = self.get_object()
       return reverse("playlist", kwargs={"pk": playlist.pk})
 
@@ -416,7 +498,7 @@ class PlaylistDetail(LoginRequiredMixin, DetailView):
   context_object_name = 'playlist'
 
   def dispatch(self, request, *args, **kwargs):
-    
+    '''redirect user if they are not associated with the profile '''
     if not request.user.is_authenticated:
       return redirect('main_page')
     
@@ -442,7 +524,7 @@ class PlaylistDetail(LoginRequiredMixin, DetailView):
 
 
   def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-     
+    '''get playlist songs associated with a playlist so they can be displayed on the required page'''
     context = super().get_context_data(**kwargs)
     playlist = self.get_object()
 
@@ -463,11 +545,13 @@ class DeletePlaylistSong(LoginRequiredMixin, DeleteView):
   context_object_name = "playlist_song"
 
   def get_success_url(self):
+    '''redirect user when successful'''
     playlist_song = self.get_object()
     playlist = playlist_song.playlist
     return reverse("playlist", kwargs={"pk":playlist.pk})
 
   def dispatch(self, request, *args, **kwargs):
+    '''ensure that the playlist song is correctly associated with the profile of the user'''
     playlist_song = self.get_object()
     profile = playlist_song.playlist.profile
     if profile.user != request.user:
@@ -484,11 +568,14 @@ class DeletePlaylist(LoginRequiredMixin, DeleteView):
   context_object_name = "playlist"
 
   def get_success_url(self):
+    '''redirect a user on success'''
     playlist = self.get_object()
     profile = playlist.profile
     return reverse("profile", kwargs={"pk":profile.pk})
 
   def dispatch(self, request, *args, **kwargs):
+    '''ensure that the playlist is correctly associated with the profile of the user'''
+
     playlist = self.get_object()
     profile = playlist.profile
     if profile.user != request.user:
@@ -497,10 +584,3 @@ class DeletePlaylist(LoginRequiredMixin, DeleteView):
 
   def get_login_url(self):
     return reverse('main_page')
-
-# update playlist view can be used to delete songs or add more through text box
-# can also delete playlists from profile
-# also should have a detailed playlist view
-
-# stretch:
-# each detailed song view should have a link to add to a playlist, will open up a new page where a playlist can be chosen
